@@ -11,6 +11,8 @@ import { SignupComponent } from './signup/signup.component';
 import { LoginComponent } from './login/login.component';
 import { VerficationComponent } from './signup/verification.component';
 import { HomeComponent } from './home/home.component';
+import { HomePageComponent } from './home-page/home-page.component';
+import { ProductPageComponent } from './product-page/product-page.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -19,6 +21,8 @@ import { HomeComponent } from './home/home.component';
     LoginComponent,
     VerficationComponent,
     HomeComponent,
+    HomePageComponent,
+    ProductPageComponent,
   ],
   imports: [
     BrowserModule,

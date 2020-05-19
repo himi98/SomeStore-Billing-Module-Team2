@@ -1,4 +1,4 @@
-package main.java.com.capstore.app.signup_login;
+package main.java.com.capstore.app.repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;

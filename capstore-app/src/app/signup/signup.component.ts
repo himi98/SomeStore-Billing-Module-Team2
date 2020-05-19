@@ -25,7 +25,7 @@ export class SignupComponent implements OnInit {
       this._capstoreService
         .registerCustomer(this.userDetails)
         .subscribe((error) => console.log(error));
-    } else {
+    } else if (this.role == 'Merchant' || this.role == 'Third-Party Merchant') {
       console.log(this.userDetails);
       this._capstoreService
         .registerMerchant(this.userDetails)

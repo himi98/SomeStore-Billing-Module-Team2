@@ -1,4 +1,4 @@
-package main.java.com.capstore.app.signup_login;
+package main.java.com.capstore.app.repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.Data;
 import main.java.com.capstore.app.models.User;
+import main.java.com.capstore.app.signup_login.ConfirmationToken;
 
 @Data
 @Repository

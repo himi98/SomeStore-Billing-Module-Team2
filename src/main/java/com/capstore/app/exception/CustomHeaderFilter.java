@@ -1,4 +1,4 @@
-package exception;
+package main.java.com.capstore.app.exception;
 
 import java.io.IOException;
 

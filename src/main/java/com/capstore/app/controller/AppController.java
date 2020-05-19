@@ -1,4 +1,6 @@
-package main.java.com.capstore.app.signup_login;
+package main.java.com.capstore.app.controller;
+
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -8,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,14 +22,22 @@ import org.springframework.web.servlet.ModelAndView;
 
 import main.java.com.capstore.app.models.CustomerDetails;
 import main.java.com.capstore.app.models.MerchantDetails;
-
+import main.java.com.capstore.app.models.Product;
+import main.java.com.capstore.app.repository.ConfirmationTokenRepository;
+import main.java.com.capstore.app.repository.ProductServiceImpl;
+import main.java.com.capstore.app.repository.UserRepository;
+import main.java.com.capstore.app.signup_login.ConfirmationToken;
+import main.java.com.capstore.app.signup_login.EmailSenderService;
 import lombok.Data;
 
 @Data
 @Transactional
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
-public class UserAccountController {
+@CrossOrigin(origins = "http://localhost:4200",allowedHeaders = "*")
+public class AppController {
+	@Autowired
+	ProductServiceImpl productServiceImpl;
+	
 	@Autowired
 	UserRepository userRepository;
 	
@@ -56,8 +68,8 @@ public class UserAccountController {
             SimpleMailMessage mailMessage = new SimpleMailMessage();
             mailMessage.setTo(cd.getEmail());
             mailMessage.setSubject("Complete Registration!");
-            mailMessage.setFrom("himanshu.rathod1998@gmail.com");
-            mailMessage.setText("To confirm your account, please click here : "
+            mailMessage.setFrom("capstore06@gmail.com");
+            mailMessage.setText("To activate your account, please click here : "
             +"http://localhost:4200/verify?token="+confirmationToken.getConfirmationToken());
 
             emailSenderService.sendEmail(mailMessage);
@@ -85,11 +97,11 @@ public class UserAccountController {
             confirmationTokenRepository.save(confirmationToken);
 
             SimpleMailMessage mailMessage = new SimpleMailMessage();
-            mailMessage.setTo(md.getEmail());
-            mailMessage.setSubject("Complete Registration!");
-            mailMessage.setFrom("himanshu.rathod1998@gmail.com");
-            mailMessage.setText("To confirm your account, please click here : "
-            +"http://localhost:4200/verify?token="+confirmationToken.getConfirmationToken());
+            mailMessage.setTo("dsonaje6@gmail.com");
+            mailMessage.setSubject("Merchant Requesting Approval!");
+            mailMessage.setFrom("capstore06@gmail.com");
+            mailMessage.setText("To provide Approval, please click here : "
+            +"http://localhost:8080/Billing-App/confirm-account?token="+confirmationToken.getConfirmationToken());
 
             emailSenderService.sendEmail(mailMessage);
 
@@ -114,6 +126,15 @@ public class UserAccountController {
             	MerchantDetails md=userRepository.findMerchantById(token.getUid());
             	md.setActive(true);
                 userRepository.saveMerchant(md);
+                
+                SimpleMailMessage mailMessage1 = new SimpleMailMessage();
+                mailMessage1.setTo(md.getEmail());
+                mailMessage1.setSubject("Account Activated!");
+                mailMessage1.setFrom("capstore06@gmail.com");
+                mailMessage1.setText("Admin approved your account.\nTo login and access your account, please click here : "
+                +"http://localhost:4200");
+
+                emailSenderService.sendEmail(mailMessage1);
             }
             
             return ResponseEntity.ok(HttpStatus.OK);
@@ -138,7 +159,7 @@ public class UserAccountController {
     			}
     		}
     	}
-    	else if (role.equals("Merchant")) {
+    	else {
     		MerchantDetails md=userRepository.findMerchantByEmailIgnoreCase(email);
     		if(md!=null && md.isActive()==true) {
     			if(pass.equals(md.getPassword())) {
@@ -148,6 +169,34 @@ public class UserAccountController {
     	}
     	return new ResponseEntity<Error>(HttpStatus.CONFLICT);
     }
+    
+  //All Products Data
+  	@GetMapping(value="/allProducts")
+  	public List<Product> getAllProducts(){
+  		return productServiceImpl.allProductsList();
+  	}
+  	
+  	
+  	//Products data of particular category
+  	@GetMapping(value="/productCategory/{category}")
+  	public List<Product> getCategory(@PathVariable("category") String productCategory){
+  		
+  		return productServiceImpl.specificCategoryProducts(productCategory);
+  	}
+  	
+  	
+  	//Product data based on discount
+  	@GetMapping(value="/discountCategory/{category}/{discountPercent}")
+  	public List<Product> getDiscountProducts(@PathVariable("category") String productCategory,@PathVariable("discountPercent") String discount){
+  		
+  		return productServiceImpl.specificDiscountProducts(productCategory, discount);
+  	}
+  	
+  	
+  	@GetMapping(value="/searchProducts/{category}")
+  	public List<Product> getSearchProducts(@PathVariable("category") String productSearch){
+  		return productServiceImpl.searchProducts(productSearch);
+  	}
     
     // getters and setters
     

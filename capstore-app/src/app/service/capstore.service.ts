@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Product } from '../Model/Product.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -19,6 +20,35 @@ export class CapstoreService {
 
   public login(email, password, role): Observable<any> {
     return this.http.post(this.baseUrl + '/login', [email, password, role]);
+  }
+
+  public getUser(tk): Observable<any> {
+    return this.http.get<any>(this.baseUrl + '/confirm-account?token=' + tk);
+  }
+
+  getCategory(category) {
+    return this.http.get<Product[]>(
+      this.baseUrl + '/productCategory/' + category
+    );
+  }
+  getAllProducts() {
+    return this.http.get<Product[]>(this.baseUrl + '/allProducts');
+  }
+  getDiscount(category, discountPercent): Observable<any> {
+    return this.http.get<Product[]>(
+      this.baseUrl + '/discountCategory/' + category + '/' + discountPercent
+    );
+  }
+  getSearchProducts(category) {
+    return this.http.get<Product[]>(
+      this.baseUrl + '/searchProducts/' + category
+    );
+  }
+  getProduct(id) {
+    return this.http.get<Product>(
+      //  provide url for getting single product
+      id
+    );
   }
 
   get isLoggedIn() {
@@ -42,10 +72,6 @@ export class CapstoreService {
   getCurrentMerchant() {
     return localStorage.getItem('merchant');
   }
-  getUser(tk): Observable<any> {
-    return this.http.get<any>(this.baseUrl + '/confirm-account?token=' + tk);
-  }
-
   getUserDetail() {
     return 'ram@gmail.com';
   }

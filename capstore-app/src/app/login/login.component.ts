@@ -72,9 +72,10 @@ export class LoginComponent implements OnInit {
   storeData(data) {
     if (this.role == 'Customer') {
       this.custDetails.push(data);
+      this.router.navigate(['homepage']);
     } else {
       this.merchDetails.push(data);
+      this.router.navigate(['home']);
     }
-    this.router.navigate(['home']);
   }
 }
