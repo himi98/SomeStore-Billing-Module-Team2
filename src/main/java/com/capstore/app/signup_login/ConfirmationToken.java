@@ -12,8 +12,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import main.java.com.capstore.app.models.CustomerDetails;
 import main.java.com.capstore.app.models.MerchantDetails;
@@ -23,6 +26,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table(name="confirmation_token")
 public class ConfirmationToken {
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,25 +38,19 @@ public class ConfirmationToken {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
-
-    @OneToOne(targetEntity = CustomerDetails.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "user_id", insertable=false,updatable=false)
-    private CustomerDetails cd;
     
-    @OneToOne(targetEntity = MerchantDetails.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "user_id",insertable=false,updatable=false)
-    private MerchantDetails md;
+    @Column(name="user_id")
+    private int uid;
     
-    public ConfirmationToken(CustomerDetails cd) {
-        this.cd = cd;
+    public ConfirmationToken(int uid) {
+        this.uid = uid;
         createdDate = new Date();
         confirmationToken = UUID.randomUUID().toString();
     }
     
-    public ConfirmationToken(MerchantDetails md) {
-        this.md = md;
-        createdDate = new Date();
-        confirmationToken = UUID.randomUUID().toString();
-    }
+	public ConfirmationToken() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 }

@@ -1,57 +1,55 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CapstoreService {
-  private baseUrl = "http://localhost:8080";
-private loggedInStatus=JSON.parse(localStorage.getItem('loggedIn')||'false');
-  constructor(private http:HttpClient) { }
+  private baseUrl = 'http://localhost:8080/Billing-App';
+  private loggedInStatus = JSON.parse(
+    localStorage.getItem('loggedIn') || 'false'
+  );
+  constructor(private http: HttpClient) {}
   public registerCustomer(customer: Object): Observable<any> {
-    return this.http.post(this.baseUrl+'/registerCustomer', customer);
+    return this.http.post(this.baseUrl + '/registerCustomer', customer);
   }
-  public registerMerchant(merchant:Object):Observable<any>{
-    return this.http.post(this.baseUrl+'/registerMerchant', merchant);
+  public registerMerchant(merchant: Object): Observable<any> {
+    return this.http.post(this.baseUrl + '/registerMerchant', merchant);
   }
-  get isLoggedIn()
-  {
-return JSON.parse(localStorage.getItem('loggedIn')|| this.loggedInStatus.toString());
+
+  public login(email, password, role): Observable<any> {
+    return this.http.post(this.baseUrl + '/login', [email, password, role]);
   }
-  setLoggedIn(value:boolean)
-  {
-    this.loggedInStatus=value;
-    localStorage.setItem('loggedIn','true');
+
+  get isLoggedIn() {
+    return JSON.parse(
+      localStorage.getItem('loggedIn') || this.loggedInStatus.toString()
+    );
   }
-  setCurrentCustomer(user){
-    localStorage.setItem("customer", JSON.stringify(user));
-  
+  setLoggedIn(value: boolean) {
+    this.loggedInStatus = value;
+    localStorage.setItem('loggedIn', 'true');
   }
-getCurrentCustomer()
-  {
-  return localStorage.getItem("customer");
-  } 
-  setCurrentMerchant(user){
-    localStorage.setItem("merchant", JSON.stringify(user));
-  
+  setCurrentCustomer(user) {
+    localStorage.setItem('customer', JSON.stringify(user));
   }
-getCurrentMerchant()
-  {
-  return localStorage.getItem("merchant");
-  } 
-  getMerchant(): Observable<any> {
-    return this.http.get<any>(this.baseUrl+"/confirm-account");
+  getCurrentCustomer() {
+    return localStorage.getItem('customer');
   }
-  getCustomer(): Observable<any> {
-    return this.http.get<any>(this.baseUrl+"/confirm-account");
+  setCurrentMerchant(user) {
+    localStorage.setItem('merchant', JSON.stringify(user));
   }
-  
-getUserDetail()
-{
-  return "ram@gmail.com";
-}
-getSomeData()
-{
-  return "bhaak";
-}
+  getCurrentMerchant() {
+    return localStorage.getItem('merchant');
+  }
+  getUser(tk): Observable<any> {
+    return this.http.get<any>(this.baseUrl + '/confirm-account?token=' + tk);
+  }
+
+  getUserDetail() {
+    return 'ram@gmail.com';
+  }
+  getSomeData() {
+    return 'bhaak';
+  }
 }

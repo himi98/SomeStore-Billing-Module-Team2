@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,17 +22,18 @@ import main.java.com.capstore.app.models.MerchantDetails;
 import lombok.Data;
 
 @Data
+@Transactional
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 public class UserAccountController {
 	@Autowired
-	private UserRepository userRepository;
+	UserRepository userRepository;
 	
 	@Autowired
-	private ConfirmationTokenRepository confirmationTokenRepository;
+	ConfirmationTokenRepository confirmationTokenRepository;
 	
 	@Autowired
-	private EmailSenderService emailSenderService;
+	EmailSenderService emailSenderService;
 
     @RequestMapping(value="/registerCustomer", method = RequestMethod.POST)
     public ResponseEntity<?> registerCustomer(@Valid @RequestBody CustomerDetails cd)
@@ -43,8 +46,10 @@ public class UserAccountController {
         else
         {
             userRepository.saveCustomer(cd);
-
-            ConfirmationToken confirmationToken = new ConfirmationToken(cd);
+            CustomerDetails cd1=userRepository.findCustomerByEmailIgnoreCase(cd.getEmail());
+            
+            ConfirmationToken confirmationToken = new ConfirmationToken(cd1.getUserId());
+            System.out.println(confirmationToken);
 
             confirmationTokenRepository.save(confirmationToken);
 
@@ -53,7 +58,7 @@ public class UserAccountController {
             mailMessage.setSubject("Complete Registration!");
             mailMessage.setFrom("himanshu.rathod1998@gmail.com");
             mailMessage.setText("To confirm your account, please click here : "
-            +"http://localhost:8082/confirm-account?token="+confirmationToken.getConfirmationToken());
+            +"http://localhost:4200/verify?token="+confirmationToken.getConfirmationToken());
 
             emailSenderService.sendEmail(mailMessage);
             
@@ -73,8 +78,9 @@ public class UserAccountController {
         else
         {
             userRepository.saveMerchant(md);
+            MerchantDetails md1=userRepository.findMerchantByEmailIgnoreCase(md.getEmail());
 
-            ConfirmationToken confirmationToken = new ConfirmationToken(md);
+            ConfirmationToken confirmationToken = new ConfirmationToken(md1.getUserId());
 
             confirmationTokenRepository.save(confirmationToken);
 
@@ -83,7 +89,7 @@ public class UserAccountController {
             mailMessage.setSubject("Complete Registration!");
             mailMessage.setFrom("himanshu.rathod1998@gmail.com");
             mailMessage.setText("To confirm your account, please click here : "
-            +"http://localhost:8082/confirm-account?token="+confirmationToken.getConfirmationToken());
+            +"http://localhost:4200/verify?token="+confirmationToken.getConfirmationToken());
 
             emailSenderService.sendEmail(mailMessage);
 
@@ -93,19 +99,19 @@ public class UserAccountController {
     
     
     @RequestMapping(value="/confirm-account", method= {RequestMethod.GET, RequestMethod.POST})
-    public ResponseEntity<?> confirmUserAccount(ModelAndView modelAndView, @RequestParam("token")String confirmationToken)
+    public ResponseEntity<?> confirmUserAccount(@Valid  @RequestParam("token") String confirmationToken)
     {
         ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
 
         if(token != null)
         {
-            if(userRepository.findCustomerByEmailIgnoreCase(token.getCd().getEmail())!=null) {
-            	CustomerDetails cd=userRepository.findCustomerByEmailIgnoreCase(token.getCd().getEmail());
+            if(userRepository.findCustomerById(token.getUid())!=null) {
+            	CustomerDetails cd=userRepository.findCustomerById(token.getUid());
             	cd.setActive(true);
                 userRepository.saveCustomer(cd);
             }
-            else if(userRepository.findMerchantByEmailIgnoreCase(token.getMd().getEmail())!=null) {
-            	MerchantDetails md=userRepository.findMerchantByEmailIgnoreCase(token.getMd().getEmail());
+            else if(userRepository.findMerchantById(token.getUid())!=null) {
+            	MerchantDetails md=userRepository.findMerchantById(token.getUid());
             	md.setActive(true);
                 userRepository.saveMerchant(md);
             }
@@ -117,5 +123,32 @@ public class UserAccountController {
         	return new ResponseEntity<Error>(HttpStatus.CONFLICT);
         }
     }
+    
+    @RequestMapping(value="/login", method= {RequestMethod.GET, RequestMethod.POST})
+    public ResponseEntity<?> userLogin(@Valid @RequestBody String[] userCredentials) {
+    	String email=userCredentials[0];
+    	String pass=userCredentials[1];
+    	String role=userCredentials[2];
+    	System.out.println(email+pass+role);
+    	if (role.equals("Customer")) {
+    		CustomerDetails cd=userRepository.findCustomerByEmailIgnoreCase(email);
+    		if(cd!=null && cd.isActive()==true) {
+    			if(pass.equals(cd.getPassword())) {
+    				return ResponseEntity.ok().body(cd);
+    			}
+    		}
+    	}
+    	else if (role.equals("Merchant")) {
+    		MerchantDetails md=userRepository.findMerchantByEmailIgnoreCase(email);
+    		if(md!=null && md.isActive()==true) {
+    			if(pass.equals(md.getPassword())) {
+    				return ResponseEntity.ok().body(md);
+    			}
+    		}
+    	}
+    	return new ResponseEntity<Error>(HttpStatus.CONFLICT);
+    }
+    
     // getters and setters
+    
 }

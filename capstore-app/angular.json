@@ -119,6 +119,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "capstore-app"
+    }
+  },
+  "defaultProject": "capstore-app",
+  "cli": {
+    "analytics": "f27c929b-7f93-42b5-b958-c9707c29fd3b"
+  }
 }
