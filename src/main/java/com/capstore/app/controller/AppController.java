@@ -125,6 +125,7 @@ public class AppController {
             else if(userRepository.findMerchantById(token.getUid())!=null) {
             	MerchantDetails md=userRepository.findMerchantById(token.getUid());
             	md.setActive(true);
+            	md.setApproved(true);
                 userRepository.saveMerchant(md);
                 
                 SimpleMailMessage mailMessage1 = new SimpleMailMessage();

@@ -35,8 +35,6 @@ public class MerchantDetails extends User{
     @Column(name = "rating")
     private int rating;
 
-	
-	
 	public Set<ProductFeedback> getpF() {
 		return pF;
 	}
@@ -91,6 +89,8 @@ public class MerchantDetails extends User{
 		this.pF = productFeedback;
 	}
 	public MerchantDetails() {
+		super();
+		this.isApproved=false;
 	}
 	
 }
