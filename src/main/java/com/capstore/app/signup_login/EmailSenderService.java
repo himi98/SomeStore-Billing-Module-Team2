@@ -1,5 +1,7 @@
 package main.java.com.capstore.app.signup_login;
 
+import javax.mail.internet.MimeMessage;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -22,5 +24,15 @@ public class EmailSenderService {
 	@Async
 	public void sendEmail(SimpleMailMessage email) {
 		javaMailSender.send(email);
+	}
+	
+	@Async
+	public void sendEmail(MimeMessage email) {
+		javaMailSender.send(email);
+	}
+	
+	public MimeMessage createMessage() {
+		
+		return javaMailSender.createMimeMessage();
 	}
 }

@@ -5,7 +5,7 @@ export class User {
   password: String;
   email: String;
   role: String;
-  isActive;
+  isActive: boolean;
   securityQuestion: String;
   securityAnswer: String;
   phoneNumber: String;

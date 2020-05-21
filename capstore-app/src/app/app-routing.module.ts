@@ -6,6 +6,7 @@ import { VerficationComponent } from './signup/verification.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { ProductPageComponent } from './product-page/product-page.component';
 import { HomeComponent } from './home/home.component';
+import { VerifyMerchantComponent } from './verify-merchant/verify-merchant.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -14,6 +15,7 @@ const routes: Routes = [
   { path: 'homepage', component: HomePageComponent },
   { path: 'productpage', component: ProductPageComponent },
   { path: 'home', component: HomeComponent },
+  { path: 'verifyMerchant', component: VerifyMerchantComponent },
 ];
 
 @NgModule({

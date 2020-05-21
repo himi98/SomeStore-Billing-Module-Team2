@@ -78,4 +78,14 @@ export class CapstoreService {
   getSomeData() {
     return 'bhaak';
   }
+
+  getMerchantForVerification(token: String): Observable<any> {
+    return this.http.get(this.baseUrl + '/getMerchant?token=' + token);
+  }
+
+  getToken(token: string, action: string): Observable<any> {
+    return this.http.get(
+      this.baseUrl + '/generateToken?token=' + token + '&action=' + action
+    );
+  }
 }

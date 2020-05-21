@@ -2,17 +2,20 @@ package main.java.com.capstore.app.controller;
 
 import java.util.List;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,7 +51,7 @@ public class AppController {
 	EmailSenderService emailSenderService;
 
     @RequestMapping(value="/registerCustomer", method = RequestMethod.POST)
-    public ResponseEntity<?> registerCustomer(@Valid @RequestBody CustomerDetails cd)
+    public ResponseEntity<?> registerCustomer(@Valid @RequestBody CustomerDetails cd) throws MessagingException
     {
         CustomerDetails existingCustomer = userRepository.findCustomerByEmailIgnoreCase(cd.getEmail());
         if(existingCustomer != null)
@@ -79,7 +82,7 @@ public class AppController {
     }
 
     @RequestMapping(value="/registerMerchant", method = RequestMethod.POST)
-    public ResponseEntity<?> registerMerchant(@Valid @RequestBody MerchantDetails md)
+    public ResponseEntity<?> registerMerchant(@Valid @RequestBody MerchantDetails md) throws MessagingException
     {
 
         MerchantDetails existingMerchant = userRepository.findMerchantByEmailIgnoreCase(md.getEmail());
@@ -95,16 +98,19 @@ public class AppController {
             ConfirmationToken confirmationToken = new ConfirmationToken(md1.getUserId());
 
             confirmationTokenRepository.save(confirmationToken);
-
-            SimpleMailMessage mailMessage = new SimpleMailMessage();
-            mailMessage.setTo("dsonaje6@gmail.com");
-            mailMessage.setSubject("Merchant Requesting Approval!");
-            mailMessage.setFrom("capstore06@gmail.com");
-            mailMessage.setText("To provide Approval, please click here : "
-            +"http://localhost:8080/Billing-App/confirm-account?token="+confirmationToken.getConfirmationToken());
+            
+            MimeMessage mailMessage = emailSenderService.createMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true);
+            String url = "http://localhost:4200/verifyMerchant?token="+confirmationToken.getConfirmationToken();
+            helper.setTo("himanshu.rathod1998@gmail.com");
+            helper.setSubject("Merchant Requesting Approval!");
+            helper.setFrom("capstore06@gmail.com");
+            helper.setText("<html><body><h1>Merchant Registration!</h1><br>" +
+            		md+"<br><button type='submit'>"
+            		+"<a href="+url+">Show Details</a></button>",true);
 
             emailSenderService.sendEmail(mailMessage);
-
+            
             return ResponseEntity.ok(HttpStatus.OK);
         }
     }
@@ -122,28 +128,56 @@ public class AppController {
             	cd.setActive(true);
                 userRepository.saveCustomer(cd);
             }
-            else if(userRepository.findMerchantById(token.getUid())!=null) {
-            	MerchantDetails md=userRepository.findMerchantById(token.getUid());
-            	md.setActive(true);
-            	md.setApproved(true);
-                userRepository.saveMerchant(md);
-                
-                SimpleMailMessage mailMessage1 = new SimpleMailMessage();
-                mailMessage1.setTo(md.getEmail());
-                mailMessage1.setSubject("Account Activated!");
-                mailMessage1.setFrom("capstore06@gmail.com");
-                mailMessage1.setText("Admin approved your account.\nTo login and access your account, please click here : "
-                +"http://localhost:4200");
-
-                emailSenderService.sendEmail(mailMessage1);
-            }
-            
+//            else if(userRepository.findMerchantById(token.getUid())!=null) {
+//            	MerchantDetails md=userRepository.findMerchantById(token.getUid());
+//            	md.setActive(true);
+//            	md.setApproved(true);
+//                userRepository.saveMerchant(md);
+//                
+//                SimpleMailMessage mailMessage1 = new SimpleMailMessage();
+//                mailMessage1.setTo(md.getEmail());
+//                mailMessage1.setSubject("Account Activated!");
+//                mailMessage1.setFrom("capstore06@gmail.com");
+//                mailMessage1.setText("Admin approved your account.\nTo login and access your account, please click here : "
+//                +"http://localhost:4200");
+//
+//                emailSenderService.sendEmail(mailMessage1);
+//            }
+//            
             return ResponseEntity.ok(HttpStatus.OK);
-        }
+      }
         else
         {
         	return new ResponseEntity<Error>(HttpStatus.CONFLICT);
         }
+     }
+    
+    @GetMapping("/generateToken")
+    public ResponseEntity<?> generateToken(@Valid  @RequestParam("token") String confirmationToken,@Valid  @RequestParam("action") String action) throws MessagingException{
+    	
+    	ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
+    	
+    	MerchantDetails md=userRepository.findMerchantById(token.getUid());
+    	if(action.equals("Accept")) {
+    	md.setActive(true);
+    	md.setApproved(true); }
+    	else {
+    	md.setActive(false);
+    	md.setApproved(false);  }
+    	
+        userRepository.saveMerchant(md);
+        
+        MimeMessage mailMessage = emailSenderService.createMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true);
+        helper.setTo(md.getEmail());
+        helper.setSubject("Account Activated!");
+        helper.setFrom("capstore06@gmail.com");
+        helper.setText("Admin approved your account.\nTo login and access your account, please click here : "
+        +"http://localhost:4200");
+
+        emailSenderService.sendEmail(mailMessage);
+        
+        return ResponseEntity.ok().body(md);
     }
     
     @RequestMapping(value="/login", method= {RequestMethod.GET, RequestMethod.POST})
@@ -169,6 +203,13 @@ public class AppController {
     		}
     	}
     	return new ResponseEntity<Error>(HttpStatus.CONFLICT);
+    }
+    
+    @RequestMapping(value="/getMerchant", method= {RequestMethod.GET, RequestMethod.POST})
+    public ResponseEntity<?> userLogin(@Valid  @RequestParam("token") String confToken) {
+    	ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confToken);
+    	MerchantDetails md=userRepository.findMerchantById(token.getUid());
+    	return ResponseEntity.ok().body(md);
     }
     
   //All Products Data
@@ -198,6 +239,11 @@ public class AppController {
   	public List<Product> getSearchProducts(@PathVariable("category") String productSearch){
   		return productServiceImpl.searchProducts(productSearch);
   	}
+  	
+  	@GetMapping("/{email}")
+	public ResponseEntity<MerchantDetails>verifyMerchantDetails(@PathVariable("email") String email){
+		return new ResponseEntity<MerchantDetails>(userRepository.findMerchantByEmailIgnoreCase(email),HttpStatus.OK);
+	}
     
     // getters and setters
     

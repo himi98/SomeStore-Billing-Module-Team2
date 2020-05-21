@@ -13,6 +13,7 @@ import { VerficationComponent } from './signup/verification.component';
 import { HomeComponent } from './home/home.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { ProductPageComponent } from './product-page/product-page.component';
+import { VerifyMerchantComponent } from './verify-merchant/verify-merchant.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -23,6 +24,7 @@ import { ProductPageComponent } from './product-page/product-page.component';
     HomeComponent,
     HomePageComponent,
     ProductPageComponent,
+    VerifyMerchantComponent,
   ],
   imports: [
     BrowserModule,
