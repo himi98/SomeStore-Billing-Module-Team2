@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Product } from '../Model/Product.model';
-import { Coupon } from '../Model/Coupon.model';
 import { CapstoreService } from '../service/capstore.service';
+import { Product } from '../Model/Product.model';
 
 @Component({
-  selector: 'app-home-page',
+  selector: 'app-homepage',
   templateUrl: './home-page.component.html',
   styleUrls: ['./home-page.component.css'],
 })
@@ -19,17 +18,16 @@ export class HomePageComponent implements OnInit {
   columnDisplay: number = 3;
   noShow: boolean = false;
   discountPercent: string = '';
-  couponList: Coupon[];
 
   constructor(
-    private _capstoreService: CapstoreService,
+    private capstoreService: CapstoreService,
     private route: Router
   ) {}
 
   ngOnInit(): void {
-    this._capstoreService.getAllProducts().subscribe((response) => {
+    this.capstoreService.getAllProducts().subscribe((response) => {
       this.allProducts = response;
-      this.categoryProducts = this.allProducts;
+
       this.products = this.removeDuplicates(
         this.allProducts,
         'productCategory'
@@ -38,27 +36,29 @@ export class HomePageComponent implements OnInit {
     });
   }
 
-  // products based on selection in category dropdown
   getCategoryProducts(c) {
     this.category = c.target.innerHTML;
 
     this.noShow = true;
-    this._capstoreService.getCategory(this.category).subscribe((response) => {
+    this.capstoreService.getCategory(this.category).subscribe((response) => {
       this.categoryProducts = response;
     });
   }
 
-  //products based on selection in category dropdown and discount dropdown
   getDiscountProducts(c) {
     this.discountPercent = c.target.innerHTML;
     localStorage.setItem('category', this.category);
     this.noShow = true;
-    this._capstoreService
+    this.capstoreService
       .getDiscount(localStorage.getItem('category'), this.discountPercent)
       .subscribe((response) => {
         this.categoryProducts = response;
       });
     console.log(this.categoryProducts);
+  }
+
+  applyFilters(selectedFilter) {
+    this.filter = selectedFilter;
   }
 
   removeDuplicates(array, key) {
@@ -67,19 +67,17 @@ export class HomePageComponent implements OnInit {
   }
 
   search() {
-    this._capstoreService
+    this.capstoreService
       .getSearchProducts(this.searchProduct)
       .subscribe((response) => {
         this.categoryProducts = response;
       });
   }
 
-  //perform action on click --slider images
   show() {
     alert('1');
   }
 
-  //to open and close coupons popup
   closePop() {
     document.getElementById('id01').style.display = 'none';
   }
@@ -87,7 +85,6 @@ export class HomePageComponent implements OnInit {
     document.getElementById('id01').style.display = 'block';
   }
 
-  //scroll bar in the coupon popup
   openNav() {
     document.getElementById('mySidebar').style.width = '250px';
     document.getElementById('main').style.marginLeft = '250px';
@@ -96,10 +93,5 @@ export class HomePageComponent implements OnInit {
   closeNav() {
     document.getElementById('mySidebar').style.width = '0';
     document.getElementById('main').style.marginLeft = '0';
-  }
-
-  productPage(id) {
-    localStorage.setItem('product', id);
-    this.route.navigate(['productpage']);
   }
 }
