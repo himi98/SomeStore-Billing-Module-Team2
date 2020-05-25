@@ -7,6 +7,9 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { ProductPageComponent } from './product-page/product-page.component';
 import { HomeComponent } from './home/home.component';
 import { VerifyMerchantComponent } from './verify-merchant/verify-merchant.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { FilterComponent } from './product-filter/filter.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -16,6 +19,9 @@ const routes: Routes = [
   { path: 'productpage', component: ProductPageComponent },
   { path: 'home', component: HomeComponent },
   { path: 'verifyMerchant', component: VerifyMerchantComponent },
+  { path: 'forgotPassword', component: ForgotPasswordComponent },
+  { path: 'filterProducts', component: FilterComponent },
+  { path: 'changePassword', component: ChangePasswordComponent },
 ];
 
 @NgModule({

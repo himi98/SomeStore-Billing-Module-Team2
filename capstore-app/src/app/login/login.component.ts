@@ -9,9 +9,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
-  custDetails: User[] = [];
+  //custDetails;
   password;
-  merchDetails: User[] = [];
+  //merchDetails;
   email;
   errorMessage;
   check;
@@ -71,10 +71,12 @@ export class LoginComponent implements OnInit {
 
   storeData(data) {
     if (this.role == 'Customer') {
-      this.custDetails.push(data);
+      this._capstoreService.custDetails.push(data);
+      this._capstoreService.email = this.email;
       this.router.navigate(['homepage']);
     } else {
-      this.merchDetails.push(data);
+      this._capstoreService.merchDetails.push(data);
+      this._capstoreService.email = this.email;
       this.router.navigate(['home']);
     }
   }

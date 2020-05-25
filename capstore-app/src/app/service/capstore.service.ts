@@ -2,10 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Product } from '../Model/Product.model';
+import { User } from '../Model/User.model';
 @Injectable({
   providedIn: 'root',
 })
 export class CapstoreService {
+  custDetails: User[] = [];
+  merchDetails: User[] = [];
+  email;
   private baseUrl = 'http://localhost:8080/Billing-App';
   private loggedInStatus = JSON.parse(
     localStorage.getItem('loggedIn') || 'false'
@@ -87,5 +91,25 @@ export class CapstoreService {
     return this.http.get(
       this.baseUrl + '/generateToken?token=' + token + '&action=' + action
     );
+  }
+
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(this.baseUrl + '/forgotPassword', email);
+  }
+
+  changePassword(
+    currentPassword: string,
+    newPassword: string,
+    email: string
+  ): Observable<any> {
+    return this.http.post(this.baseUrl + '/changePassword', [
+      currentPassword,
+      newPassword,
+      email,
+    ]);
+  }
+
+  sortFilter(filter: string): Observable<any> {
+    return this.http.get(this.baseUrl + '/filter/' + filter);
   }
 }
