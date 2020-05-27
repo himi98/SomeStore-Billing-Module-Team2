@@ -13,8 +13,9 @@ public interface ProductServiceInterface {
 	public List<Product> specificCategoryProducts(String category);
 	public List<Product> specificDiscountProducts(String category,String discount);
 	public List<Product> searchProducts(String category);
-	public List<Product> sortAsc();
-	public List<Product> sortDesc();
-	public List<Product> sortRasc();
-	public List<Product> sortRdesc();
+	/*
+	 * public List<Product> sortAsc(); public List<Product> sortDesc(); public
+	 * List<Product> sortRasc(); public List<Product> sortRdesc();
+	 */
+	List<Product> filterAndCategory(String category,String order);
 }

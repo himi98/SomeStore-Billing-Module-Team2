@@ -10,6 +10,7 @@ import { VerifyMerchantComponent } from './verify-merchant/verify-merchant.compo
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { FilterComponent } from './product-filter/filter.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { CategoryPageComponent } from './category-page/category-page.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -20,8 +21,9 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'verifyMerchant', component: VerifyMerchantComponent },
   { path: 'forgotPassword', component: ForgotPasswordComponent },
-  { path: 'filterProducts', component: FilterComponent },
+  //{ path: 'filterProducts', component: FilterComponent },
   { path: 'changePassword', component: ChangePasswordComponent },
+  { path: 'categorypage/:category', component: CategoryPageComponent },
 ];
 
 @NgModule({

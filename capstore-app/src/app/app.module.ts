@@ -17,6 +17,7 @@ import { VerifyMerchantComponent } from './verify-merchant/verify-merchant.compo
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { FilterComponent } from './product-filter/filter.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { CategoryPageComponent } from './category-page/category-page.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -31,6 +32,7 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
     ForgotPasswordComponent,
     FilterComponent,
     ChangePasswordComponent,
+    CategoryPageComponent,
   ],
   imports: [
     BrowserModule,

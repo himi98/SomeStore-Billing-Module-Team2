@@ -29,14 +29,15 @@
         </li>
 
         <li class="dropdown">
-          <button class="dropbtn">Catagories</button>
+          <button class="dropbtn">Categories</button>
           <div class="dropdown-content">
-            <a href="#">All Products</a>
-            <a href="#">Men Wear</a>
-            <a href="#">Women Wear</a>
-            <a href="#">Men Shoes</a>
-            <a href="#">Women Shoes</a>
-            <a href="#">Electronics</a>
+            <li>
+              <a
+                [routerLink]="['../', 'categorypage', product.productCategory]"
+                *ngFor="let product of products"
+                >{{ product.productCategory }}</a
+              >
+            </li>
           </div>
         </li>
         <li class="dropdown">
@@ -101,18 +102,21 @@
     <!-- Wrapper for slides -->
     <div class="carousel-inner">
       <div class="item active">
+        <img src="/assets/Images/img5.jpg" style="width: 100%; height: 100%;" />
+      </div>
+
+      <div class="item">
         <img
-          src="/assets/Images/img15.jpg"
+          src="/assets/Images/img10.jpg"
           style="width: 100%; height: 100%;"
         />
       </div>
 
       <div class="item">
-        <img src="/assets/Images/img1.jpg" style="width: 100%; height: 100%;" />
-      </div>
-
-      <div class="item">
-        <img src="/assets/Images/img2.jpg" style="width: 100%; height: 100%;" />
+        <img
+          src="/assets/Images/img12.jpg"
+          style="width: 100%; height: 100%;"
+        />
       </div>
     </div>
 
@@ -130,37 +134,37 @@
   <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-3">
-      <img src="/assets/Images/img7.jpg" style="height: 100%; width: 100%;" />
-    </div>
-    <div class="col-md-1"></div>
-    <div class="col-md-3">
-      <img src="/assets/Images/img8.jpg" style="height: 100%; width: 100%;" />
+      <img src="/assets/Images/img14.jpg" style="height: 100%; width: 100%;" />
     </div>
     <div class="col-md-1"></div>
     <div class="col-md-3">
       <img src="/assets/Images/img9.jpg" style="height: 100%; width: 100%;" />
     </div>
     <div class="col-md-1"></div>
+    <div class="col-md-3">
+      <img src="/assets/Images/img17.jpg" style="height: 100%; width: 100%;" />
+    </div>
+    <div class="col-md-1"></div>
   </div>
   <br />
   <div class="row">
     <div class="col-md-12">
-      <img src="/assets/Images/img10.jpg" style="height: 100%; width: 100%;" />
+      <img src="/assets/Images/img2.jpg" style="height: 100%; width: 100%;" />
     </div>
   </div>
   <br />
   <div class="row">
     <div class="col-md-3">
-      <img src="/assets/Images/img11.jpg" style="height: 100%; width: 100%;" />
+      <img src="/assets/Images/img3.jpg" style="height: 100%; width: 100%;" />
     </div>
     <div class="col-md-3">
-      <img src="/assets/Images/img12.jpg" style="height: 100%; width: 100%;" />
+      <img src="/assets/Images/img7.jpg" style="height: 100%; width: 100%;" />
     </div>
     <div class="col-md-3">
-      <img src="/assets/Images/img13.jpg" style="height: 100%; width: 100%;" />
+      <img src="/assets/Images/img15.jpg" style="height: 100%; width: 100%;" />
     </div>
     <div class="col-md-3">
-      <img src="/assets/Images/img14.jpg" style="height: 100%; width: 100%;" />
+      <img src="/assets/Images/img16.jpg" style="height: 100%; width: 100%;" />
     </div>
   </div>
   <br />

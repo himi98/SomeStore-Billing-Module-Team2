@@ -109,7 +109,25 @@ export class CapstoreService {
     ]);
   }
 
-  sortFilter(filter: string): Observable<any> {
-    return this.http.get(this.baseUrl + '/filter/' + filter);
+  // sortFilter(filter: string): Observable<any> {
+  //   return this.http.get(this.baseUrl + '/filter/' + filter);
+  // }
+
+  sortFilter(filter, category) {
+    if (filter.localeCompare('Price-Low To High') == 0) {
+      return this.http.get<Product[]>(this.baseUrl + '/' + category + '/Asc');
+    }
+
+    if (filter.localeCompare('Price-High to Low') == 0) {
+      return this.http.get<Product[]>(this.baseUrl + '/' + category + '/Desc');
+    }
+
+    if (filter.localeCompare('Rating-Low To High') == 0) {
+      return this.http.get<Product[]>(this.baseUrl + '/' + category + '/Rasc');
+    }
+
+    if (filter.localeCompare('Rating-High to Low') == 0) {
+      return this.http.get<Product[]>(this.baseUrl + '/' + category + '/Rdesc');
+    }
   }
 }

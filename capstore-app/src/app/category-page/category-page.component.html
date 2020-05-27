@@ -1,0 +1,166 @@
+<li class="dropdown">
+  <a class="dropdown-toggle" data-toggle="dropdown" href="#"
+    ><b>Apply Filters</b> <span class="caret"></span
+  ></a>
+  <ul class="dropdown-menu" (click)="sortFilter($event, routeCategory)">
+    <li><a>Price-Low To High</a></li>
+    <li><a>Price-High to Low</a></li>
+    <li><a>Rating-Low To High</a></li>
+    <li><a>Rating-High to Low</a></li>
+  </ul>
+</li>
+
+<ng-container *ngIf="noShow" style="text-align: center; margin-left: 600px;">
+  <div class="container py-5" style="margin-left: 600px;">
+    <div class="row text-center text-white mb-5">
+      <div class="col-lg-7 mx-auto">
+        <h1 class="display-4">Product List</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <!-- List group-->
+        <ul class="list-group shadow">
+          <!-- list group item-->
+          <li class="list-group-item" *ngFor="let product of categoryProducts">
+            <!-- Custom content-->
+            <div
+              class="media align-items-lg-center flex-column flex-lg-row p-3"
+            >
+              <div class="media-body order-2 order-lg-1">
+                <h5 class="mt-0 font-weight-bold mb-2">Product Name</h5>
+                <p class="font-italic text-muted mb-0 small">
+                  {{ product.productCategory }}
+                </p>
+                <div
+                  class="d-flex align-items-center justify-content-between mt-1"
+                >
+                  <h6 class="font-weight-bold my-2">
+                    {{ product.productPrice }}
+                  </h6>
+                  <h6 class="font-weight-bold my-2">
+                    {{ product.productRating }}
+                  </h6>
+                  <ul class="list-inline small">
+                    <li class="list-inline-item m-0">
+                      <i class="fa fa-star text-success"></i>
+                    </li>
+                    <li class="list-inline-item m-0">
+                      <i class="fa fa-star text-success"></i>
+                    </li>
+                    <li class="list-inline-item m-0">
+                      <i class="fa fa-star text-success"></i>
+                    </li>
+                    <li class="list-inline-item m-0">
+                      <i class="fa fa-star text-success"></i>
+                    </li>
+                    <li class="list-inline-item m-0">
+                      <i class="fa fa-star-o text-gray"></i>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <img
+                src="https://i.imgur.com/6IUbEME.jpg"
+                alt="Product Image"
+                width="200"
+                class="ml-lg-5 order-1 order-lg-2"
+              />
+            </div>
+            <!-- End -->
+            <br />
+            <button
+              type="button"
+              class="btn btn-default btn-rounded peach-gradient"
+              style="background-color: greenyellow;"
+            >
+              <b>Product</b>
+            </button>
+          </li>
+          <!-- End -->
+          <!-- list group item-->
+        </ul>
+        <!-- End -->
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-container
+  *ngIf="filterShow"
+  style="text-align: center; margin-left: 400px;"
+>
+  <div class="container py-5">
+    <div class="row text-center text-white mb-5">
+      <div class="col-lg-7 mx-auto">
+        <h1 class="display-4">Product List</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <!-- List group-->
+        <ul class="list-group shadow">
+          <!-- list group item-->
+          <li class="list-group-item" *ngFor="let product of filterProducts">
+            <!-- Custom content-->
+            <div
+              class="media align-items-lg-center flex-column flex-lg-row p-3"
+            >
+              <div class="media-body order-2 order-lg-1">
+                <h5 class="mt-0 font-weight-bold mb-2">Product Name</h5>
+                <p class="font-italic text-muted mb-0 small">
+                  {{ product.productCategory }}
+                </p>
+                <div
+                  class="d-flex align-items-center justify-content-between mt-1"
+                >
+                  <h6 class="font-weight-bold my-2">
+                    {{ product.productPrice }}
+                  </h6>
+                  <h6 class="font-weight-bold my-2">
+                    {{ product.productRating }}
+                  </h6>
+                  <ul class="list-inline small">
+                    <li class="list-inline-item m-0">
+                      <i class="fa fa-star text-success"></i>
+                    </li>
+                    <li class="list-inline-item m-0">
+                      <i class="fa fa-star text-success"></i>
+                    </li>
+                    <li class="list-inline-item m-0">
+                      <i class="fa fa-star text-success"></i>
+                    </li>
+                    <li class="list-inline-item m-0">
+                      <i class="fa fa-star text-success"></i>
+                    </li>
+                    <li class="list-inline-item m-0">
+                      <i class="fa fa-star-o text-gray"></i>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <img
+                src="https://i.imgur.com/6IUbEME.jpg"
+                alt="Product Image"
+                width="200"
+                class="ml-lg-5 order-1 order-lg-2"
+              />
+            </div>
+            <!-- End -->
+            <br />
+            <button
+              type="button"
+              class="btn btn-default btn-rounded peach-gradient"
+              style="background-color: greenyellow;"
+            >
+              <b>Product</b>
+            </button>
+          </li>
+          <!-- End -->
+          <!-- list group item-->
+        </ul>
+        <!-- End -->
+      </div>
+    </div>
+  </div>
+</ng-container>

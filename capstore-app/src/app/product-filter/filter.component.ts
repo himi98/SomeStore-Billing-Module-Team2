@@ -25,9 +25,9 @@ export class FilterComponent implements OnInit {
   sortFilter(f) {
     this.filter = f.target.innerHTML;
     this.noShow = true;
-    this.capstoreService.sortFilter(this.filter).subscribe((response) => {
-      this.filterProducts = response;
-    });
-    console.log(this.filterProducts);
+    // this.capstoreService.sortFilter(this.filter).subscribe((response) => {
+    //   this.filterProducts = response;
+    // });
+    // console.log(this.filterProducts);
   }
 }

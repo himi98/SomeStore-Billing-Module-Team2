@@ -112,25 +112,40 @@ public class ProductServiceImpl implements ProductServiceInterface {
 
 	}
 
+	/*
+	 * @Override public List<Product> sortAsc() { return
+	 * productRepository.findByOrderByProductPriceAsc(); }
+	 * 
+	 * @Override public List<Product> sortDesc() { return
+	 * productRepository.findByOrderByProductPriceDesc(); }
+	 * 
+	 * @Override public List<Product> sortRasc() { // TODO Auto-generated method
+	 * stub return productRepository.findByOrderByProductRatingAsc(); }
+	 * 
+	 * @Override public List<Product> sortRdesc() { // TODO Auto-generated method
+	 * stub return productRepository.findByOrderByProductRatingDesc(); }
+	 */
+	
+	
+	
 	@Override
-	public List<Product> sortAsc() {
-		return productRepository.findByOrderByProductPriceAsc();
+	public List<Product> filterAndCategory(String category, String order) {
+		
+		if(order.equals("Asc"))
+			return productRepository.findByProductCategoryOrderByProductPriceAsc(category);
+		if(order.equals("Desc"))
+			return productRepository.findByProductCategoryOrderByProductPriceDesc(category);
+		if(order.equals("Rasc"))
+			return productRepository.findByProductCategoryOrderByProductRatingAsc(category);
+		if(order.equals("Rdesc"))
+			return productRepository.findByProductCategoryOrderByProductRatingDesc(category);
+		
+		
+		return null;
+		
+		
+		
+		
 	}
-
-	@Override
-	public List<Product> sortDesc() {
-		return productRepository.findByOrderByProductPriceDesc();
-	}
-
-	@Override
-	public List<Product> sortRasc() {
-		// TODO Auto-generated method stub
-		return productRepository.findByOrderByProductRatingAsc();
-	}
-
-	@Override
-	public List<Product> sortRdesc() {
-		// TODO Auto-generated method stub
-		return productRepository.findByOrderByProductRatingDesc();
-	}
+	
 }

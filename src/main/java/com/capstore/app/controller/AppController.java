@@ -271,18 +271,11 @@ public class AppController {
 		return new ResponseEntity<MerchantDetails>(userRepository.findMerchantByEmailIgnoreCase(email), HttpStatus.OK);
 	}
 
-	@GetMapping("/filter/{order}")
-	public List<Product> sortFilter(@PathVariable String order) {
-		if (order.equals("Asc"))
-			return productServiceImpl.sortAsc();
-		else if (order.equals("Desc"))
-			return productServiceImpl.sortDesc();
-		if (order.equals("Rasc"))
-			return productServiceImpl.sortRasc();
-		else if (order.equals("Rdesc"))
-			return productServiceImpl.sortRdesc();
-		return null;
+	@GetMapping("/{category}/{order}")
+	public List<Product> filterandcategory(@PathVariable String category, @PathVariable String order) {
+		return productServiceImpl.filterAndCategory(category, order);
 	}
+
 	// getters and setters
 
 }
