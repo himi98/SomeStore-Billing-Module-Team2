@@ -1,4 +1,4 @@
-package main.java.com.capstore.app.signup_login;
+package com.capstore.app.signup_login;
 
 import java.security.Key;
 
@@ -12,15 +12,6 @@ public class PasswordProtector {
 	private static final byte[] keyValue = new byte[] { 'T', 'h', 'i', 's', 'I', 's', 'A', 'S', 'e', 'c', 'r', 'e', 't',
 			'K', 'e', 'y' };
 
-	public static String encrypt(String valueToEnc) throws Exception {
-		Key key = generateKey();
-		Cipher c = Cipher.getInstance(ALGORITHM);
-		c.init(Cipher.ENCRYPT_MODE, key);
-		byte[] encValue = c.doFinal(valueToEnc.getBytes());
-		String encryptedValue = new Base64().encodeToString(encValue);
-		return encryptedValue;
-	}
-
 	public static String decrypt(String encryptedValue) throws Exception {
 		Key key = generateKey();
 		Cipher c = Cipher.getInstance(ALGORITHM);
@@ -29,6 +20,15 @@ public class PasswordProtector {
 		byte[] decValue = c.doFinal(decordedValue);
 		String decryptedValue = new String(decValue);
 		return decryptedValue;
+	}
+
+	public static String encrypt(String valueToEnc) throws Exception {
+		Key key = generateKey();
+		Cipher c = Cipher.getInstance(ALGORITHM);
+		c.init(Cipher.ENCRYPT_MODE, key);
+		byte[] encValue = c.doFinal(valueToEnc.getBytes());
+		String encryptedValue = new Base64().encodeToString(encValue);
+		return encryptedValue;
 	}
 
 	private static Key generateKey() throws Exception {

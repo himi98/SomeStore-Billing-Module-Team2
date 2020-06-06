@@ -1,6 +1,7 @@
-package main.java.com.capstore.app.models;
+package com.capstore.app.models;
 
 import java.sql.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -16,71 +17,87 @@ public class Coupon {
 	@Column(name = "coupon_code")
 	private String couponCode;
 	@Column(name = "user_id")
-	private int userId; //(Foreign Key)
+	private int userId; // (Foreign Key)
 	@Column(name = "end_date")
-    private Date couponEndDate;
+	private Date couponEndDate;
 	@Column(name = "start_date")
-    private Date couponStartDate;
+	private Date couponStartDate;
 	@Column(name = "coupon_amount")
-    private int couponAmount; 
+	private int couponAmount;
 	@Column(name = "min_order_amount")
-    private int couponMinOrderAmount;
+	private int couponMinOrderAmount;
 	@Column(name = "issued_by")
-    private String issuedBy; //{“Admin”,”Merchant”}
-    
-	
-	public int getCouponId() {
-		return couponId;
+	private String issuedBy; // {“Admin”,”Merchant”}
+
+	public Coupon() {
 	}
-	public void setCouponId(int couponId) {
-		this.couponId = couponId;
-	}
-	public String getCouponCode() {
-		return couponCode;
-	}
-	public void setCouponCode(String couponCode) {
-		this.couponCode = couponCode;
-	}
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
-	public int getUserId() {
-		return userId;
-	}
-	public void setUseId(int user_id) {
-		this.userId = user_id;
-	}
-	public Date getCouponEndDate() {
-		return couponEndDate;
-	}
-	public void setCouponEndDate(Date couponEndDate) {
-		this.couponEndDate = couponEndDate;
-	}
-	public Date getCouponStartDate() {
-		return couponStartDate;
-	}
-	public void setCouponStartDate(Date couponStartDate) {
-		this.couponStartDate = couponStartDate;
-	}
+
 	public int getCouponAmount() {
 		return couponAmount;
 	}
-	public void setCouponAmount(int couponAmount) {
-		this.couponAmount = couponAmount;
+
+	public String getCouponCode() {
+		return couponCode;
 	}
+
+	public Date getCouponEndDate() {
+		return couponEndDate;
+	}
+
+	public int getCouponId() {
+		return couponId;
+	}
+
 	public int getCouponMinOrderAmount() {
 		return couponMinOrderAmount;
 	}
-	public void setCouponMinOrderAmount(int couponMinOrderAmount) {
-		this.couponMinOrderAmount = couponMinOrderAmount;
+
+	public Date getCouponStartDate() {
+		return couponStartDate;
 	}
+
 	public String getIssuedBy() {
 		return issuedBy;
 	}
+
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setCouponAmount(int couponAmount) {
+		this.couponAmount = couponAmount;
+	}
+
+	public void setCouponCode(String couponCode) {
+		this.couponCode = couponCode;
+	}
+
+	public void setCouponEndDate(Date couponEndDate) {
+		this.couponEndDate = couponEndDate;
+	}
+
+	public void setCouponId(int couponId) {
+		this.couponId = couponId;
+	}
+
+	public void setCouponMinOrderAmount(int couponMinOrderAmount) {
+		this.couponMinOrderAmount = couponMinOrderAmount;
+	}
+
+	public void setCouponStartDate(Date couponStartDate) {
+		this.couponStartDate = couponStartDate;
+	}
+
 	public void setIssuedBy(String issuedBy) {
 		this.issuedBy = issuedBy;
 	}
-	public Coupon() {
-	} 
-	
+
+	public void setUseId(int user_id) {
+		this.userId = user_id;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
 }

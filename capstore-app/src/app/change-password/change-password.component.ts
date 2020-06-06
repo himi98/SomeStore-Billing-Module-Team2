@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CapstoreService } from '../service/capstore.service';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-changepassword',
@@ -13,6 +14,7 @@ export class ChangePasswordComponent implements OnInit {
   confirmPassword;
   email;
   submitted = false;
+  error;
   message = 'Your password has been changed. Use your new password for Login.';
   constructor(
     private _capstoreService: CapstoreService,
@@ -31,8 +33,17 @@ export class ChangePasswordComponent implements OnInit {
           this.newPassword,
           this._capstoreService.email
         )
-        .subscribe((error) => console.log(error));
-      this.submitted = true;
+        .subscribe(
+          (data) => {
+            console.log(data);
+            this.submitted = true;
+          },
+          (error) => {
+            if (error instanceof HttpErrorResponse) {
+              alert(error.error);
+            }
+          }
+        );
     }
   }
 }

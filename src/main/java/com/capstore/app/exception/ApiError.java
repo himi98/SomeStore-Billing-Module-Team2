@@ -1,4 +1,4 @@
-package main.java.com.capstore.app.exception;
+package com.capstore.app.exception;
 
 import java.time.LocalDateTime;
 import java.util.List;

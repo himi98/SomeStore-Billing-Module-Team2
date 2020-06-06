@@ -1,14 +1,8 @@
-package main.java.com.capstore.app.models;
+package com.capstore.app.models;
 
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -17,48 +11,57 @@ public class Cart {
 
 	@Id
 	@Column(name = "cart_id")
-    private int cartId;   //(Primary Key)
+	private int cartId; // (Primary Key)
 	@Column(name = "user_id")
-	private int userID;  //(references cust_id)
+	private int userID; // (references cust_id)
 	@Column(name = "type")
-    private String type;  //(“Wishlist”,”cart”)
+	private String type; // (“Wishlist”,”cart”)
 	@Column(name = "product_id")
 	private int productId;
 	@Column(name = "product_quantity")
 	private int quantity;
-	
-	public int getProductId() {
-		return productId;
+
+	public Cart() {
 	}
-	public void setProductId(int productId) {
-		this.productId = productId;
-	}
-	public int getQuantity() {
-		return quantity;
-	}
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-	public int getUserID() {
-		return userID;
-	}
-	public void setUserID(int userID) {
-		this.userID = userID;
-	}
+
 	public int getCartId() {
 		return cartId;
 	}
-	public void setCartId(int cartId) {
-		this.cartId = cartId;
+
+	public int getProductId() {
+		return productId;
 	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
 	public String getType() {
 		return type;
 	}
+
+	public int getUserID() {
+		return userID;
+	}
+
+	public void setCartId(int cartId) {
+		this.cartId = cartId;
+	}
+
+	public void setProductId(int productId) {
+		this.productId = productId;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
 	public void setType(String type) {
 		this.type = type;
 	}
-	
-	public Cart() {
+
+	public void setUserID(int userID) {
+		this.userID = userID;
 	}
 
 }

@@ -1,4 +1,4 @@
-package main.java.com.capstore.app.exception;
+package com.capstore.app.exception;
 
 import java.io.IOException;
 
@@ -16,15 +16,15 @@ import org.springframework.stereotype.Component;
 public class CustomHeaderFilter implements Filter {
 
 	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-		System.out.println("Init filter");
+	public void destroy() {
+		System.out.println("destroy filter. release our resources here if any");
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-				
+
 		httpServletResponse.addHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Origin");
 		httpServletResponse.addHeader("Access-Control-Allow-Headers", "Content-Type");
 		httpServletResponse.addHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Methods");
@@ -35,8 +35,8 @@ public class CustomHeaderFilter implements Filter {
 	}
 
 	@Override
-	public void destroy() {
-		System.out.println("destroy filter. release our resources here if any");
+	public void init(FilterConfig filterConfig) throws ServletException {
+		System.out.println("Init filter");
 	}
 
 }

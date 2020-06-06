@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CapstoreService } from '../service/capstore.service';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { User } from '../Model/User.model';
 
 @Component({
   selector: 'app-forgotpassword',
@@ -19,10 +21,17 @@ export class ForgotPasswordComponent implements OnInit {
   ngOnInit(): void {}
 
   onSubmit(form) {
-    this.submitted = true;
-    this._capstoreService
-      .forgotPassword(this.email)
-      .subscribe((error) => console.log(error));
-    this.email = ' ';
+    this._capstoreService.forgotPassword(this.email).subscribe(
+      (data: User) => {
+        console.log(data);
+        this.email = ' ';
+        this.submitted = true;
+      },
+      (error) => {
+        if (error instanceof HttpErrorResponse) {
+          alert(error.error);
+        }
+      }
+    );
   }
 }

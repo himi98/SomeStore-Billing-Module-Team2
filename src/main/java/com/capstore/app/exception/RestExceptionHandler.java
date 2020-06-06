@@ -1,4 +1,4 @@
-package main.java.com.capstore.app.exception;
+package com.capstore.app.exception;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -13,19 +13,21 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.capstore.app.exception.ApiError;
+
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@Override
-	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
-			HttpHeaders headers, HttpStatus status, WebRequest request) {
-		String error = "Malformed JSON request";
-		return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error, ex));
-	}
-
 	private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
 		return new ResponseEntity<>(apiError, apiError.getStatus());
+	}
+
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<?> globleExcpetionHandler(Exception ex) {
+		ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR);
+		apiError.setMessage(ex.getMessage());
+		return buildResponseEntity(apiError);
 	}
 
 	@ExceptionHandler(EntityNotFoundException.class)
@@ -35,11 +37,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		return buildResponseEntity(apiError);
 	}
 
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<?> globleExcpetionHandler(Exception ex) {
-		ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR);
-		apiError.setMessage(ex.getMessage());
-		return buildResponseEntity(apiError);
+	@Override
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+			HttpHeaders headers, HttpStatus status, WebRequest request) {
+		String error = "Malformed JSON request";
+		return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error, ex));
 	}
 
 	// other exception handlers below

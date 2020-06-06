@@ -1,4 +1,4 @@
-package main.java.com.capstore.app.repository;
+package com.capstore.app.repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -11,9 +11,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.capstore.app.models.CustomerDetails;
+import com.capstore.app.models.MerchantDetails;
+
 import lombok.Data;
-import main.java.com.capstore.app.models.CustomerDetails;
-import main.java.com.capstore.app.models.MerchantDetails;
 
 @Data
 @EnableTransactionManagement
@@ -28,16 +29,6 @@ public class UserRepository {
 	@PersistenceContext
 	EntityManager entityManager;
 
-	public CustomerDetails findCustomerById(int id) {
-		CustomerDetails cd = entityManager.find(CustomerDetails.class, id);
-		return cd;
-	}
-
-	public MerchantDetails findMerchantById(int id) {
-		MerchantDetails md = entityManager.find(MerchantDetails.class, id);
-		return md;
-	}
-
 	public CustomerDetails findCustomerByEmailIgnoreCase(String email) {
 		CustomerDetails cd = null;
 		try {
@@ -50,6 +41,11 @@ public class UserRepository {
 		return cd;
 	}
 
+	public CustomerDetails findCustomerById(int id) {
+		CustomerDetails cd = entityManager.find(CustomerDetails.class, id);
+		return cd;
+	}
+
 	public MerchantDetails findMerchantByEmailIgnoreCase(String email) {
 		MerchantDetails md = null;
 		try {
@@ -59,6 +55,11 @@ public class UserRepository {
 		} catch (NoResultException nre) {
 		}
 
+		return md;
+	}
+
+	public MerchantDetails findMerchantById(int id) {
+		MerchantDetails md = entityManager.find(MerchantDetails.class, id);
 		return md;
 	}
 

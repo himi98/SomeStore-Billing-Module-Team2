@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { User } from '../Model/User.model';
 import { CapstoreService } from '../service/capstore.service';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -9,9 +10,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
-  //custDetails;
   password;
-  //merchDetails;
   email;
   errorMessage;
   check;
@@ -23,50 +22,18 @@ export class LoginComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit(): void {
-    this.check = this._capstoreService.getUserDetail();
-    this.c = 0;
-  }
+  ngOnInit(): void {}
   onSubmit(form) {
-    // if (this.role == 'Customer') {
-    //   for (let a of this.custDetails) {
-    //     if (a.email == this.email) {
-    //       this.confirmUser = a;
-    //       this.c = this.c + 1;
-    //     }
-    //     if (a.password == this.password) this.c = this.c + 1;
-    //   }
-    //   if (this.c == 2) {
-    //     this._capstoreService.setCurrentCustomer(this.confirmUser);
-    //     //this._router.navigate(['/successpage']);
-    //     this._capstoreService.setLoggedIn(true);
-    //     console.log('Hello customer');
-    //     this.errorMessage = '';
-    //     this.c = 0;
-    //   } else this.errorMessage = 'Invalid Credentials';
-    // } else {
-    //   console.log(this.password);
-    //   console.log(form.value.selectedBy);
-
-    //   for (let a of this.merchDetails) {
-    //     if (a.email == this.email) {
-    //       this.confirmUser = a;
-    //       this.c = this.c + 1;
-    //     }
-    //     if (a.password == this.password) this.c = this.c + 1;
-    //   }
-    //   if (this.c == 2) {
-    //     this._capstoreService.setCurrentMerchant(this.confirmUser);
-    //     //this._router.navigate(['/successpage']);
-    //     this._capstoreService.setLoggedIn(true);
-    //     console.log('Hello merchant');
-    //     this.errorMessage = '';
-    //   } else this.errorMessage = 'Invalid Credentials';
-    // }
-
-    this._capstoreService
-      .login(this.email, this.password, this.role)
-      .subscribe((data) => this.storeData(data));
+    this._capstoreService.login(this.email, this.password, this.role).subscribe(
+      (data) => {
+        this.storeData(data);
+      },
+      (error) => {
+        if (error instanceof HttpErrorResponse) {
+          alert(error.error);
+        }
+      }
+    );
   }
 
   storeData(data) {

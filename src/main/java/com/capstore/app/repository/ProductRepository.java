@@ -1,10 +1,10 @@
-package main.java.com.capstore.app.repository;
+package com.capstore.app.repository;
 
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-import main.java.com.capstore.app.models.Product;
+import com.capstore.app.models.Product;
 
 public interface ProductRepository extends CrudRepository<Product, Integer> {
 	/*

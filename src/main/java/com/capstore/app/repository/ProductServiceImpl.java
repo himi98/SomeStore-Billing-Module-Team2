@@ -1,4 +1,4 @@
-package main.java.com.capstore.app.repository;
+package com.capstore.app.repository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,77 +6,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import main.java.com.capstore.app.models.Product;
+import com.capstore.app.models.Product;
+import com.capstore.app.repository.ProductRepository;
+import com.capstore.app.repository.ProductServiceInterface;
 
 @Service
 public class ProductServiceImpl implements ProductServiceInterface {
-
-	@Autowired
-	ProductRepository productRepository;
-
-	// Returns all products in database
-	@Override
-	public List<Product> allProductsList() {
-		return productList();
-	}
-
-	// Returns products of specific category
-	@Override
-	public List<Product> specificCategoryProducts(String productCategory) {
-
-		List<Product> products = new ArrayList<Product>();
-		if (productCategory.equalsIgnoreCase("All Products")) {
-			return productList();
-		}
-		for (Product p : productList()) {
-			if (p.getProductCategory().equals(productCategory)) {
-				products.add(p);
-			}
-		}
-		return products;
-	}
-
-	// Returns products of specific category and discount
-	@Override
-	public List<Product> specificDiscountProducts(String category, String discount) {
-
-		List<Product> categoryProducts = specificCategoryProducts(category);
-		List<Product> products = new ArrayList<Product>();
-		for (Product p : categoryProducts) {
-			if (discount.equalsIgnoreCase("Less than 50")) {
-				if (p.getDiscount() < 50) {
-					products.add(p);
-				}
-			} else if (discount.equalsIgnoreCase("50-60")) {
-				if (p.getDiscount() >= 50 && p.getDiscount() < 60) {
-					products.add(p);
-				}
-			} else if (discount.equalsIgnoreCase("60-70")) {
-				if (p.getDiscount() >= 60 && p.getDiscount() < 70) {
-					products.add(p);
-				}
-			} else if (discount.equalsIgnoreCase("Greater than 70")) {
-				if (p.getDiscount() >= 70) {
-					products.add(p);
-				}
-			}
-
-		}
-
-		return products;
-	}
-
-	@Override
-	public List<Product> searchProducts(String category) {
-		List<Product> allProducts = productList();
-		List<Product> products = new ArrayList<Product>();
-		for (Product product : allProducts) {
-			if (product.getProductInfo().toLowerCase().contains(category.toLowerCase())) {
-				products.add(product);
-			}
-		}
-		return products;
-	}
 
 	private static List<Product> productList() {
 
@@ -112,6 +47,59 @@ public class ProductServiceImpl implements ProductServiceInterface {
 
 	}
 
+	@Autowired
+	ProductRepository productRepository;
+
+	// Returns all products in database
+	@Override
+	public List<Product> allProductsList() {
+		return productList();
+	}
+
+	@Override
+	public List<Product> filterAndCategory(String category, String order) {
+
+		if (order.equals("Asc"))
+			return productRepository.findByProductCategoryOrderByProductPriceAsc(category);
+		if (order.equals("Desc"))
+			return productRepository.findByProductCategoryOrderByProductPriceDesc(category);
+		if (order.equals("Rasc"))
+			return productRepository.findByProductCategoryOrderByProductRatingAsc(category);
+		if (order.equals("Rdesc"))
+			return productRepository.findByProductCategoryOrderByProductRatingDesc(category);
+
+		return null;
+
+	}
+
+	@Override
+	public List<Product> searchProducts(String category) {
+		List<Product> allProducts = productList();
+		List<Product> products = new ArrayList<Product>();
+		for (Product product : allProducts) {
+			if (product.getProductInfo().toLowerCase().contains(category.toLowerCase())) {
+				products.add(product);
+			}
+		}
+		return products;
+	}
+
+	// Returns products of specific category
+	@Override
+	public List<Product> specificCategoryProducts(String productCategory) {
+
+		List<Product> products = new ArrayList<Product>();
+		if (productCategory.equalsIgnoreCase("All Products")) {
+			return productList();
+		}
+		for (Product p : productList()) {
+			if (p.getProductCategory().equals(productCategory)) {
+				products.add(p);
+			}
+		}
+		return products;
+	}
+
 	/*
 	 * @Override public List<Product> sortAsc() { return
 	 * productRepository.findByOrderByProductPriceAsc(); }
@@ -125,27 +113,35 @@ public class ProductServiceImpl implements ProductServiceInterface {
 	 * @Override public List<Product> sortRdesc() { // TODO Auto-generated method
 	 * stub return productRepository.findByOrderByProductRatingDesc(); }
 	 */
-	
-	
-	
+
+	// Returns products of specific category and discount
 	@Override
-	public List<Product> filterAndCategory(String category, String order) {
-		
-		if(order.equals("Asc"))
-			return productRepository.findByProductCategoryOrderByProductPriceAsc(category);
-		if(order.equals("Desc"))
-			return productRepository.findByProductCategoryOrderByProductPriceDesc(category);
-		if(order.equals("Rasc"))
-			return productRepository.findByProductCategoryOrderByProductRatingAsc(category);
-		if(order.equals("Rdesc"))
-			return productRepository.findByProductCategoryOrderByProductRatingDesc(category);
-		
-		
-		return null;
-		
-		
-		
-		
+	public List<Product> specificDiscountProducts(String category, String discount) {
+
+		List<Product> categoryProducts = specificCategoryProducts(category);
+		List<Product> products = new ArrayList<Product>();
+		for (Product p : categoryProducts) {
+			if (discount.equalsIgnoreCase("Less than 50")) {
+				if (p.getDiscount() < 50) {
+					products.add(p);
+				}
+			} else if (discount.equalsIgnoreCase("50-60")) {
+				if (p.getDiscount() >= 50 && p.getDiscount() < 60) {
+					products.add(p);
+				}
+			} else if (discount.equalsIgnoreCase("60-70")) {
+				if (p.getDiscount() >= 60 && p.getDiscount() < 70) {
+					products.add(p);
+				}
+			} else if (discount.equalsIgnoreCase("Greater than 70")) {
+				if (p.getDiscount() >= 70) {
+					products.add(p);
+				}
+			}
+
+		}
+
+		return products;
 	}
-	
+
 }

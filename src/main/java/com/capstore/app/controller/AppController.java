@@ -1,4 +1,4 @@
-package main.java.com.capstore.app.controller;
+package com.capstore.app.controller;
 
 import java.util.List;
 
@@ -21,16 +21,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.capstore.app.models.CustomerDetails;
+import com.capstore.app.models.MerchantDetails;
+import com.capstore.app.models.Product;
+import com.capstore.app.repository.ConfirmationTokenRepository;
+import com.capstore.app.repository.ProductServiceImpl;
+import com.capstore.app.repository.UserRepository;
+import com.capstore.app.signup_login.ConfirmationToken;
+import com.capstore.app.signup_login.EmailSenderService;
+import com.capstore.app.signup_login.PasswordProtector;
+
 import lombok.Data;
-import main.java.com.capstore.app.models.CustomerDetails;
-import main.java.com.capstore.app.models.MerchantDetails;
-import main.java.com.capstore.app.models.Product;
-import main.java.com.capstore.app.repository.ConfirmationTokenRepository;
-import main.java.com.capstore.app.repository.ProductServiceImpl;
-import main.java.com.capstore.app.repository.UserRepository;
-import main.java.com.capstore.app.signup_login.ConfirmationToken;
-import main.java.com.capstore.app.signup_login.EmailSenderService;
-import main.java.com.capstore.app.signup_login.PasswordProtector;
 
 @Data
 @Transactional
@@ -49,64 +50,29 @@ public class AppController {
 	@Autowired
 	EmailSenderService emailSenderService;
 
-	@RequestMapping(value = "/registerCustomer", method = RequestMethod.POST)
-	public ResponseEntity<?> registerCustomer(@Valid @RequestBody CustomerDetails cd) throws Exception {
-		CustomerDetails existingCustomer = userRepository.findCustomerByEmailIgnoreCase(cd.getEmail());
-		MerchantDetails existingMerchant = userRepository.findMerchantByEmailIgnoreCase(cd.getEmail());
-		if (existingCustomer != null && existingMerchant != null) {
-
-			return new ResponseEntity<Error>(HttpStatus.CONFLICT);
-		} else {
-			cd.setPassword(PasswordProtector.encrypt(cd.getPassword()));
-			userRepository.saveCustomer(cd);
-			CustomerDetails cd1 = userRepository.findCustomerByEmailIgnoreCase(cd.getEmail());
-
-			ConfirmationToken confirmationToken = new ConfirmationToken(cd1.getUserId());
-			// System.out.println(confirmationToken);
-
-			confirmationTokenRepository.save(confirmationToken);
-
-			SimpleMailMessage mailMessage = new SimpleMailMessage();
-			mailMessage.setTo(cd.getEmail());
-			mailMessage.setSubject("Complete Registration!");
-			mailMessage.setFrom("capstore06@gmail.com");
-			mailMessage.setText("To activate your account, please click here : " + "http://localhost:4200/verify?token="
-					+ confirmationToken.getConfirmationToken());
-
-			emailSenderService.sendEmail(mailMessage);
-
-			return ResponseEntity.ok(HttpStatus.OK);
+	@RequestMapping(value = "/changePassword", method = { RequestMethod.GET, RequestMethod.POST })
+	public ResponseEntity<?> changePassword(@Valid @RequestBody String[] details) throws Exception {
+		String currPass = details[0];
+		String newPass = details[1];
+		String email = details[2];
+		if (userRepository.findCustomerByEmailIgnoreCase(email) != null) {
+			CustomerDetails cd = userRepository.findCustomerByEmailIgnoreCase(email);
+			if (cd.isActive() && currPass.equals(PasswordProtector.decrypt(cd.getPassword()))) {
+				cd.setPassword(PasswordProtector.encrypt(newPass));
+				return ResponseEntity.ok(HttpStatus.OK);
+			} else {
+				return ResponseEntity.status(HttpStatus.CONFLICT).body("Enter Valid Current Password");
+			}
+		} else if (userRepository.findMerchantByEmailIgnoreCase(email) != null) {
+			MerchantDetails md = userRepository.findMerchantByEmailIgnoreCase(email);
+			if (md.isActive() && currPass.equals(PasswordProtector.decrypt(md.getPassword()))) {
+				md.setPassword(PasswordProtector.encrypt(newPass));
+				return ResponseEntity.ok(HttpStatus.OK);
+			} else {
+				return ResponseEntity.status(HttpStatus.CONFLICT).body("Enter Valid Current Password");
+			}
 		}
-	}
-
-	@RequestMapping(value = "/registerMerchant", method = RequestMethod.POST)
-	public ResponseEntity<?> registerMerchant(@Valid @RequestBody MerchantDetails md) throws Exception {
-		CustomerDetails existingCustomer = userRepository.findCustomerByEmailIgnoreCase(md.getEmail());
-		MerchantDetails existingMerchant = userRepository.findMerchantByEmailIgnoreCase(md.getEmail());
-		if (existingMerchant != null && existingCustomer != null) {
-			return new ResponseEntity<Error>(HttpStatus.CONFLICT);
-		} else {
-			md.setPassword(PasswordProtector.encrypt(md.getPassword()));
-			userRepository.saveMerchant(md);
-			MerchantDetails md1 = userRepository.findMerchantByEmailIgnoreCase(md.getEmail());
-
-			ConfirmationToken confirmationToken = new ConfirmationToken(md1.getUserId());
-
-			confirmationTokenRepository.save(confirmationToken);
-
-			MimeMessage mailMessage = emailSenderService.createMessage();
-			MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true);
-			String url = "http://localhost:4200/verifyMerchant?token=" + confirmationToken.getConfirmationToken();
-			helper.setTo("himanshu.rathod1998@gmail.com");
-			helper.setSubject("Merchant Requesting Approval!");
-			helper.setFrom("capstore06@gmail.com");
-			helper.setText("<html><body><h1>Merchant Registration!</h1><br>" + md + "<br><button type='submit'>"
-					+ "<a href=" + url + ">Show Details</a></button>", true);
-
-			emailSenderService.sendEmail(mailMessage);
-
-			return ResponseEntity.ok(HttpStatus.OK);
-		}
+		return ResponseEntity.status(HttpStatus.CONFLICT).body("Enter Valid Current Password");
 	}
 
 	@RequestMapping(value = "/confirm-account", method = { RequestMethod.GET, RequestMethod.POST })
@@ -121,8 +87,45 @@ public class AppController {
 			}
 			return ResponseEntity.ok(HttpStatus.OK);
 		} else {
-			return new ResponseEntity<Error>(HttpStatus.CONFLICT);
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Invalid Token !!!");
 		}
+	}
+
+	@RequestMapping(value = "/forgotPassword", method = { RequestMethod.GET, RequestMethod.POST })
+	public ResponseEntity<?> forgotPassword(@Valid @RequestBody String email) throws Exception {
+		if (userRepository.findCustomerByEmailIgnoreCase(email) != null) {
+			CustomerDetails cd = userRepository.findCustomerByEmailIgnoreCase(email);
+			if (cd.isActive()) {
+				SimpleMailMessage mailMessage = new SimpleMailMessage();
+				mailMessage.setTo(cd.getEmail());
+				mailMessage.setSubject("Forgot Password");
+				mailMessage.setFrom("capstore06@gmail.com");
+				mailMessage.setText("Hi, your password is : " + PasswordProtector.decrypt(cd.getPassword()) + "\n"
+						+ "Note: Confidential Information. Do Not Share it with Others.");
+				emailSenderService.sendEmail(mailMessage);
+
+				return ResponseEntity.ok(HttpStatus.OK);
+			} else {
+				return ResponseEntity.status(HttpStatus.CONFLICT).body("Email not Activated !!!");
+			}
+		} else if (userRepository.findMerchantByEmailIgnoreCase(email) != null) {
+			MerchantDetails md = userRepository.findMerchantByEmailIgnoreCase(email);
+			if (md.isActive()) {
+				SimpleMailMessage mailMessage = new SimpleMailMessage();
+				mailMessage.setTo(md.getEmail());
+				mailMessage.setSubject("Forgot Password");
+				mailMessage.setFrom("capstore06@gmail.com");
+				mailMessage.setText("Hi, your password is : " + PasswordProtector.decrypt(md.getPassword()) + "\n"
+						+ "Note: Confidential Information. Do Not Share it with Others.");
+				emailSenderService.sendEmail(mailMessage);
+
+				return ResponseEntity.ok(HttpStatus.OK);
+			} else {
+				return ResponseEntity.status(HttpStatus.CONFLICT).body("Email not Activated !!!");
+			}
+		}
+
+		return ResponseEntity.status(HttpStatus.CONFLICT).body("Enter a Valid Email !!!");
 	}
 
 	@GetMapping("/generateToken")
@@ -155,6 +158,72 @@ public class AppController {
 		return ResponseEntity.ok().body(md);
 	}
 
+	@RequestMapping(value = "/registerCustomer", method = RequestMethod.POST)
+	public ResponseEntity<?> registerCustomer(@Valid @RequestBody CustomerDetails cd) throws Exception {
+		CustomerDetails existingCustomer = userRepository.findCustomerByEmailIgnoreCase(cd.getEmail());
+		MerchantDetails existingMerchant = userRepository.findMerchantByEmailIgnoreCase(cd.getEmail());
+		if (existingCustomer != null || existingMerchant != null) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Customer already exists !!!");
+		} else {
+			cd.setPassword(PasswordProtector.encrypt(cd.getPassword()));
+			userRepository.saveCustomer(cd);
+			CustomerDetails cd1 = userRepository.findCustomerByEmailIgnoreCase(cd.getEmail());
+
+			ConfirmationToken confirmationToken = new ConfirmationToken(cd1.getUserId());
+			// System.out.println(confirmationToken);
+
+			confirmationTokenRepository.save(confirmationToken);
+
+			SimpleMailMessage mailMessage = new SimpleMailMessage();
+			mailMessage.setTo(cd.getEmail());
+			mailMessage.setSubject("Complete Registration!");
+			mailMessage.setFrom("capstore06@gmail.com");
+			mailMessage.setText("To activate your account, please click here : " + "http://localhost:4200/verify?token="
+					+ confirmationToken.getConfirmationToken());
+
+			emailSenderService.sendEmail(mailMessage);
+
+			return ResponseEntity.ok(HttpStatus.OK);
+		}
+	}
+
+	@RequestMapping(value = "/registerMerchant", method = RequestMethod.POST)
+	public ResponseEntity<?> registerMerchant(@Valid @RequestBody MerchantDetails md) throws Exception {
+		CustomerDetails existingCustomer = userRepository.findCustomerByEmailIgnoreCase(md.getEmail());
+		MerchantDetails existingMerchant = userRepository.findMerchantByEmailIgnoreCase(md.getEmail());
+		if (existingMerchant != null && existingCustomer != null) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Merchant already exists !!!");
+		} else {
+			md.setPassword(PasswordProtector.encrypt(md.getPassword()));
+			userRepository.saveMerchant(md);
+			MerchantDetails md1 = userRepository.findMerchantByEmailIgnoreCase(md.getEmail());
+
+			ConfirmationToken confirmationToken = new ConfirmationToken(md1.getUserId());
+
+			confirmationTokenRepository.save(confirmationToken);
+
+			MimeMessage mailMessage = emailSenderService.createMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true);
+			String url = "http://localhost:4200/verifyMerchant?token=" + confirmationToken.getConfirmationToken();
+			helper.setTo("himanshu.rathod1998@gmail.com");
+			helper.setSubject("Merchant Requesting Approval!");
+			helper.setFrom("capstore06@gmail.com");
+			helper.setText("<html><body><h1>Merchant Registration!</h1><br>" + md + "<br><button type='submit'>"
+					+ "<a href=" + url + ">Show Details</a></button>", true);
+
+			emailSenderService.sendEmail(mailMessage);
+
+			return ResponseEntity.ok(HttpStatus.OK);
+		}
+	}
+
+	@RequestMapping(value = "/getMerchant", method = { RequestMethod.GET, RequestMethod.POST })
+	public ResponseEntity<?> getMerchant(@Valid @RequestParam("token") String confToken) {
+		ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confToken);
+		MerchantDetails md = userRepository.findMerchantById(token.getUid());
+		return ResponseEntity.ok().body(md);
+	}
+
 	@RequestMapping(value = "/login", method = { RequestMethod.GET, RequestMethod.POST })
 	public ResponseEntity<?> userLogin(@Valid @RequestBody String[] userCredentials) throws Exception {
 		String email = userCredentials[0];
@@ -165,79 +234,29 @@ public class AppController {
 			if (cd != null && cd.isActive() == true) {
 				if (pass.equals(PasswordProtector.decrypt(cd.getPassword()))) {
 					return ResponseEntity.ok().body(cd);
+				} else {
+					return ResponseEntity.status(HttpStatus.CONFLICT).body("Invalid Password !!!");
 				}
+			} else {
+				return ResponseEntity.status(HttpStatus.CONFLICT).body("Enter a Valid Email !!!");
 			}
 		} else {
 			MerchantDetails md = userRepository.findMerchantByEmailIgnoreCase(email);
 			if (md != null && md.isActive() == true) {
 				if (pass.equals(PasswordProtector.decrypt(md.getPassword()))) {
 					return ResponseEntity.ok().body(md);
+				} else {
+					return ResponseEntity.status(HttpStatus.CONFLICT).body("Invalid Password !!!");
 				}
+			} else {
+				return ResponseEntity.status(HttpStatus.CONFLICT).body("Enter a Valid Email !!!");
 			}
 		}
-		return new ResponseEntity<Error>(HttpStatus.CONFLICT);
 	}
 
-	@RequestMapping(value = "/forgotPassword", method = { RequestMethod.GET, RequestMethod.POST })
-	public ResponseEntity<?> forgotPassword(@Valid @RequestBody String email) throws Exception {
-		if (userRepository.findCustomerByEmailIgnoreCase(email) != null) {
-			CustomerDetails cd = userRepository.findCustomerByEmailIgnoreCase(email);
-			if (cd.isActive()) {
-				SimpleMailMessage mailMessage = new SimpleMailMessage();
-				mailMessage.setTo(cd.getEmail());
-				mailMessage.setSubject("Forgot Password");
-				mailMessage.setFrom("capstore06@gmail.com");
-				mailMessage.setText("Hi, your password is : " + PasswordProtector.decrypt(cd.getPassword()) + "\n"
-						+ "Note: Confidential Information. Do Not Share it with Others.");
-				emailSenderService.sendEmail(mailMessage);
-
-				return ResponseEntity.ok(HttpStatus.OK);
-			}
-		} else if (userRepository.findMerchantByEmailIgnoreCase(email) != null) {
-			MerchantDetails md = userRepository.findMerchantByEmailIgnoreCase(email);
-			if (md.isActive()) {
-				SimpleMailMessage mailMessage = new SimpleMailMessage();
-				mailMessage.setTo(md.getEmail());
-				mailMessage.setSubject("Forgot Password");
-				mailMessage.setFrom("capstore06@gmail.com");
-				mailMessage.setText("Hi, your password is : " + PasswordProtector.decrypt(md.getPassword()) + "\n"
-						+ "Note: Confidential Information. Do Not Share it with Others.");
-				emailSenderService.sendEmail(mailMessage);
-
-				return ResponseEntity.ok(HttpStatus.OK);
-			}
-		}
-
-		return new ResponseEntity<Error>(HttpStatus.CONFLICT);
-	}
-
-	@RequestMapping(value = "/changePassword", method = { RequestMethod.GET, RequestMethod.POST })
-	public ResponseEntity<?> changePassword(@Valid @RequestBody String[] details) throws Exception {
-		String currPass = details[0];
-		String newPass = details[1];
-		String email = details[2];
-		if (userRepository.findCustomerByEmailIgnoreCase(email) != null) {
-			CustomerDetails cd = userRepository.findCustomerByEmailIgnoreCase(email);
-			if (cd.isActive() && currPass.equals(PasswordProtector.decrypt(cd.getPassword()))) {
-				cd.setPassword(PasswordProtector.encrypt(newPass));
-				return ResponseEntity.ok(HttpStatus.OK);
-			}
-		} else if (userRepository.findMerchantByEmailIgnoreCase(email) != null) {
-			MerchantDetails md = userRepository.findMerchantByEmailIgnoreCase(email);
-			if (md.isActive() && currPass.equals(PasswordProtector.decrypt(md.getPassword()))) {
-				md.setPassword(PasswordProtector.encrypt(newPass));
-				return ResponseEntity.ok(HttpStatus.OK);
-			}
-		}
-
-		return new ResponseEntity<Error>(HttpStatus.CONFLICT);
-	}
-
-	@RequestMapping(value = "/getMerchant", method = { RequestMethod.GET, RequestMethod.POST })
-	public ResponseEntity<?> userLogin(@Valid @RequestParam("token") String confToken) {
-		ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confToken);
-		MerchantDetails md = userRepository.findMerchantById(token.getUid());
-		return ResponseEntity.ok().body(md);
+	@GetMapping("/{email}")
+	public ResponseEntity<MerchantDetails> verifyMerchantDetails(@PathVariable("email") String email) {
+		return new ResponseEntity<MerchantDetails>(userRepository.findMerchantByEmailIgnoreCase(email), HttpStatus.OK);
 	}
 
 	// All Products Data
@@ -264,11 +283,6 @@ public class AppController {
 	@GetMapping(value = "/searchProducts/{category}")
 	public List<Product> getSearchProducts(@PathVariable("category") String productSearch) {
 		return productServiceImpl.searchProducts(productSearch);
-	}
-
-	@GetMapping("/{email}")
-	public ResponseEntity<MerchantDetails> verifyMerchantDetails(@PathVariable("email") String email) {
-		return new ResponseEntity<MerchantDetails>(userRepository.findMerchantByEmailIgnoreCase(email), HttpStatus.OK);
 	}
 
 	@GetMapping("/{category}/{order}")

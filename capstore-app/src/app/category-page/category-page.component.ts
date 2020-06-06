@@ -24,7 +24,7 @@ export class CategoryPageComponent implements OnInit {
 
   constructor(
     private capstoreService: CapstoreService,
-    private route: Router,
+    private router: Router,
     private ar: ActivatedRoute
   ) {}
 
@@ -55,5 +55,9 @@ export class CategoryPageComponent implements OnInit {
         this.filterProducts = response;
       });
     console.log(this.filterProducts);
+  }
+
+  goToProductPage() {
+    this.router.navigate(['productpage']);
   }
 }

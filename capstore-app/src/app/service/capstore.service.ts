@@ -109,10 +109,6 @@ export class CapstoreService {
     ]);
   }
 
-  // sortFilter(filter: string): Observable<any> {
-  //   return this.http.get(this.baseUrl + '/filter/' + filter);
-  // }
-
   sortFilter(filter, category) {
     if (filter.localeCompare('Price-Low To High') == 0) {
       return this.http.get<Product[]>(this.baseUrl + '/' + category + '/Asc');

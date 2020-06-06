@@ -1,4 +1,4 @@
-package main.java.com.capstore.app.models;
+package com.capstore.app.models;
 
 import java.util.List;
 
@@ -33,6 +33,10 @@ public class User {
     private boolean isActive;
 	private String securityQuestion;
 	private String securityAnswer;
+	public User() {
+		super();
+		this.isActive=false;
+	}
 	public User(int userId, String name, String username, String password, String email, String role, boolean isActive,
 			String securityQuestion, String securityAnswer) {
 		super();
@@ -45,10 +49,6 @@ public class User {
 		this.isActive = isActive;
 		this.securityQuestion = securityQuestion;
 		this.securityAnswer = securityAnswer;
-	}
-	public User() {
-		super();
-		this.isActive=false;
 	}
 	
 }

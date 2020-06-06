@@ -1,4 +1,4 @@
-package test.java.com.capstore.app;
+package com.capstore.app;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

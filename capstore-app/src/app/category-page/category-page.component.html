@@ -1,17 +1,59 @@
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <span class="navbar-brand" style="color: whitesmoke;"
+        ><strong>CapStore</strong></span
+      >
+    </div>
+    <ul class="nav navbar-nav">
+      <li style="color: whitesmoke;" class="active">
+        <a href="#"><span class="glyphicon glyphicon-home"></span> LogIn</a>
+      </li>
+      <li style="color: whitesmoke;">
+        <a href="#"
+          ><span
+            style="color: whitesmoke;"
+            class="glyphicon glyphicon-globe"
+          ></span>
+          About Us</a
+        >
+      </li>
+      <li style="color: black;">
+        <a href="#"
+          ><span
+            style="color: whitesmoke;"
+            class="glyphicon glyphicon-envelope"
+          ></span>
+          Mail Us</a
+        >
+      </li>
+      <li style="color: whitesmoke;">
+        <a href="#"
+          ><span
+            style="color: whitesmoke;"
+            class="glyphicon glyphicon-earphone"
+          ></span>
+          Call Us</a
+        >
+      </li>
+    </ul>
+  </div>
+</nav>
+
 <li class="dropdown">
   <a class="dropdown-toggle" data-toggle="dropdown" href="#"
     ><b>Apply Filters</b> <span class="caret"></span
   ></a>
   <ul class="dropdown-menu" (click)="sortFilter($event, routeCategory)">
-    <li><a>Price-Low To High</a></li>
-    <li><a>Price-High to Low</a></li>
-    <li><a>Rating-Low To High</a></li>
-    <li><a>Rating-High to Low</a></li>
+    <li><a class="dropdown-item">Price-Low To High</a></li>
+    <li><a class="dropdown-item">Price-High to Low</a></li>
+    <li><a class="dropdown-item">Rating-Low To High</a></li>
+    <li><a class="dropdown-item">Rating-High to Low</a></li>
   </ul>
 </li>
 
-<ng-container *ngIf="noShow" style="text-align: center; margin-left: 600px;">
-  <div class="container py-5" style="margin-left: 600px;">
+<ng-container *ngIf="noShow" style="text-align: center;">
+  <div class="container py-5">
     <div class="row text-center text-white mb-5">
       <div class="col-lg-7 mx-auto">
         <h1 class="display-4">Product List</h1>
@@ -152,6 +194,7 @@
               type="button"
               class="btn btn-default btn-rounded peach-gradient"
               style="background-color: greenyellow;"
+              (click)="goToProductPage()"
             >
               <b>Product</b>
             </button>
